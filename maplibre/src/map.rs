@@ -14,6 +14,7 @@ use crate::{
         },
         error::RenderError,
         graph::RenderGraphError,
+        text_renderer::{TextLabel, TextRenderer},
         view_state::ViewState,
     },
     schedule::{Schedule, Stage},
@@ -50,6 +51,8 @@ pub struct Map<E: Environment> {
     schedule: Schedule,
     map_context: CurrentMapContext,
     window: <E::MapWindowConfig as MapWindowConfig>::MapWindow,
+    pub text_renderer: TextRenderer,
+    pub labels: Vec<TextLabel>,
 
     plugins: Vec<Box<dyn Plugin<E>>>,
 }
@@ -135,6 +138,24 @@ where
                     _ => panic!("Rendering context gone"),
                 };
                 Ok(())
+            }
+        }
+    }
+
+    pub fn geo_to_screen<E: Environment>(map: Map<E>, lat: f64, lon: f64) -> Option<(f32, f32)> {
+        let ll = LatLon::new(lat, lon);
+
+        let ctx = map.context().ok()?;
+
+        let screen = ctx.renderer.view_state.geo_to_screen(&ll)?;
+
+        Some((screen.x, screen.y))
+    }
+
+    pub fn on_user_click(&mut self, x: f32, y: f32) {
+        for label in &map.text_labels {
+            if let Some((x, y)) = map.geo_to_screen(label.latitude, label.longitude) {
+                text_renderer.draw_text(pass, &label.text, x, y);
             }
         }
     }

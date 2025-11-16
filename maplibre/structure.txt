@@ -1,0 +1,266 @@
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          11/16/2025  6:34 PM                src
+-a---          11/16/2025  6:34 PM           1602 build.rs
+-a---          11/16/2025  6:34 PM           2292 Cargo.toml
+-a---          11/16/2025  6:51 PM              0 structure.txt
+-a---          11/16/2025  6:34 PM         192594 style-spec-v8.json
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          11/16/2025  6:34 PM                debug
+d----          11/16/2025  6:34 PM                headless
+d----          11/16/2025  6:34 PM                io
+d----          11/16/2025  6:34 PM                platform
+d----          11/16/2025  6:34 PM                plugin
+d----          11/16/2025  6:34 PM                raster
+d----          11/16/2025  6:34 PM                render
+d----          11/16/2025  6:34 PM                style
+d----          11/16/2025  6:34 PM                tcs
+d----          11/16/2025  6:34 PM                tessellation
+d----          11/16/2025  6:34 PM                util
+d----          11/16/2025  6:34 PM                vector
+-a---          11/16/2025  6:34 PM            273 benchmarking.rs
+-a---          11/16/2025  6:34 PM            665 context.rs
+-a---          11/16/2025  6:34 PM          24268 coords.rs
+-a---          11/16/2025  6:34 PM           1404 environment.rs
+-a---          11/16/2025  6:34 PM           1148 event_loop.rs
+-a---          11/16/2025  6:34 PM           2771 kernel.rs
+-a---          11/16/2025  6:34 PM           1341 lib.rs
+-a---          11/16/2025  6:34 PM           6834 map.rs
+-a---          11/16/2025  6:34 PM          10227 schedule.rs
+-a---          11/16/2025  6:34 PM           2966 window.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\debug
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM            352 cleanup_system.rs
+-a---          11/16/2025  6:34 PM           2287 debug_pass.rs
+-a---          11/16/2025  6:34 PM           2488 mod.rs
+-a---          11/16/2025  6:34 PM           1216 queue_system.rs
+-a---          11/16/2025  6:34 PM           2024 render_commands.rs
+-a---          11/16/2025  6:34 PM           1454 resource_system.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\headless
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM            688 environment.rs
+-a---          11/16/2025  6:34 PM           1902 graph_node.rs
+-a---          11/16/2025  6:34 PM           5625 map.rs
+-a---          11/16/2025  6:34 PM           3403 mod.rs
+-a---          11/16/2025  6:34 PM           2120 system.rs
+-a---          11/16/2025  6:34 PM            679 window.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\io
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM           9941 apc.rs
+-a---          11/16/2025  6:34 PM          10839 geometry_index.rs
+-a---          11/16/2025  6:34 PM            289 mod.rs
+-a---          11/16/2025  6:34 PM           1229 scheduler.rs
+-a---          11/16/2025  6:34 PM           2557 source_client.rs
+-a---          11/16/2025  6:34 PM           2521 source_type.rs
+-a---          11/16/2025  6:34 PM           2677 static_tile_fetcher.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\platform
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          11/16/2025  6:34 PM                noweb
+-a---          11/16/2025  6:34 PM            856 mod.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\platform\noweb
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM           2115 http_client.rs
+-a---          11/16/2025  6:34 PM           1558 mod.rs
+-a---          11/16/2025  6:34 PM            997 scheduler.rs
+-a---          11/16/2025  6:34 PM            308 trace.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\plugin
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM            365 mod.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\raster
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          11/16/2025  6:34 PM                resource
+-a---          11/16/2025  6:34 PM           2866 mod.rs
+-a---          11/16/2025  6:34 PM           2288 populate_world_system.rs
+-a---          11/16/2025  6:34 PM           2384 process_raster.rs
+-a---          11/16/2025  6:34 PM           2128 queue_system.rs
+-a---          11/16/2025  6:34 PM           3225 render_commands.rs
+-a---          11/16/2025  6:34 PM           5339 request_system.rs
+-a---          11/16/2025  6:34 PM           1570 resource_system.rs
+-a---          11/16/2025  6:34 PM           3441 transferables.rs
+-a---          11/16/2025  6:34 PM           3330 upload_system.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\raster\resource
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM             35 mod.rs
+-a---          11/16/2025  6:34 PM           2890 raster.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\render
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          11/16/2025  6:34 PM                graph
+d----          11/16/2025  6:34 PM                render_phase
+d----          11/16/2025  6:34 PM                resource
+d----          11/16/2025  6:34 PM                shaders
+d----          11/16/2025  6:34 PM                systems
+d----          11/16/2025  6:34 PM                tile_view_pattern
+-a---          11/16/2025  6:34 PM           3530 builder.rs
+-a---          11/16/2025  6:34 PM           8275 camera.rs
+-a---          11/16/2025  6:34 PM            801 error.rs
+-a---          11/16/2025  6:34 PM           2274 eventually.rs
+-a---          11/16/2025  6:34 PM           8418 graph_runner.rs
+-a---          11/16/2025  6:34 PM           4291 main_pass.rs
+-a---          11/16/2025  6:34 PM          23512 mod.rs
+-a---          11/16/2025  6:34 PM           2204 render_commands.rs
+-a---          11/16/2025  6:34 PM           4269 settings.rs
+-a---          11/16/2025  6:34 PM          19815 view_state.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\render\graph
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM           8463 context.rs
+-a---          11/16/2025  6:34 PM           2042 edge.rs
+-a---          11/16/2025  6:34 PM          27694 graph.rs
+-a---          11/16/2025  6:34 PM           1424 mod.rs
+-a---          11/16/2025  6:34 PM           5563 node_slot.rs
+-a---          11/16/2025  6:34 PM          10773 node.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\render\render_phase
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM           3837 draw.rs
+-a---          11/16/2025  6:34 PM           2027 mod.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\render\resource
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM            339 buffer.rs
+-a---          11/16/2025  6:34 PM            729 mod.rs
+-a---          11/16/2025  6:34 PM           3821 pipeline.rs
+-a---          11/16/2025  6:34 PM           1320 shader.rs
+-a---          11/16/2025  6:34 PM          12557 surface.rs
+-a---          11/16/2025  6:34 PM           3389 texture.rs
+-a---          11/16/2025  6:34 PM           5336 tile_pipeline.rs
+-a---          11/16/2025  6:34 PM           8596 tracked_render_pass.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\render\shaders
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM            160 basic.fragment.wgsl
+-a---          11/16/2025  6:34 PM          13138 mod.rs
+-a---          11/16/2025  6:34 PM           2395 tile_debug.vertex.wgsl
+-a---          11/16/2025  6:34 PM           1505 tile_mask.vertex.wgsl
+-a---          11/16/2025  6:34 PM            354 tile_raster.fragment.wgsl
+-a---          11/16/2025  6:34 PM           1325 tile_raster.vertex.wgsl
+-a---          11/16/2025  6:34 PM           1262 tile.vertex.wgsl
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\render\systems
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM            450 cleanup_system.rs
+-a---          11/16/2025  6:34 PM           2228 graph_runner_system.rs
+-a---          11/16/2025  6:34 PM            202 mod.rs
+-a---          11/16/2025  6:34 PM           4363 resource_system.rs
+-a---          11/16/2025  6:34 PM            421 sort_phase_system.rs
+-a---          11/16/2025  6:34 PM           1303 tile_view_pattern_system.rs
+-a---          11/16/2025  6:34 PM            707 upload_system.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\render\tile_view_pattern
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM           7006 mod.rs
+-a---          11/16/2025  6:34 PM           6426 pattern.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\style
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM           3042 layer.rs
+-a---          11/16/2025  6:34 PM            136 mod.rs
+-a---          11/16/2025  6:34 PM           1952 raster.rs
+-a---          11/16/2025  6:34 PM           1954 source.rs
+-a---          11/16/2025  6:34 PM           7196 style.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\tcs
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          11/16/2025  6:34 PM                system
+-a---          11/16/2025  6:34 PM            695 mod.rs
+-a---          11/16/2025  6:34 PM           7217 resources.rs
+-a---          11/16/2025  6:34 PM           9555 tiles.rs
+-a---          11/16/2025  6:34 PM            201 world.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\tcs\system
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM            972 function.rs
+-a---          11/16/2025  6:34 PM           1129 mod.rs
+-a---          11/16/2025  6:34 PM            901 stage.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\tessellation
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM           3622 mod.rs
+-a---          11/16/2025  6:34 PM           5854 zero_tessellator.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\util
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM            980 fps_meter.rs
+-a---          11/16/2025  6:34 PM           2173 grid.rs
+-a---          11/16/2025  6:34 PM           2437 label.rs
+-a---          11/16/2025  6:34 PM          13282 math.rs
+-a---          11/16/2025  6:34 PM           1511 mod.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\vector
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          11/16/2025  6:34 PM                resource
+-a---          11/16/2025  6:34 PM           4197 mod.rs
+-a---          11/16/2025  6:34 PM           3241 populate_world_system.rs
+-a---          11/16/2025  6:34 PM           5826 process_vector.rs
+-a---          11/16/2025  6:34 PM           2223 queue_system.rs
+-a---          11/16/2025  6:34 PM           3703 render_commands.rs
+-a---          11/16/2025  6:34 PM           5767 request_system.rs
+-a---          11/16/2025  6:34 PM           1607 resource_system.rs
+-a---          11/16/2025  6:34 PM           6781 transferables.rs
+-a---          11/16/2025  6:34 PM           6255 upload_system.rs
+
+    Directory: C:\Users\Mallor\dev\maplibre-rs\maplibre\src\vector\resource
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          11/16/2025  6:34 PM          24895 buffer_pool.rs
+-a---          11/16/2025  6:34 PM             45 mod.rs
+

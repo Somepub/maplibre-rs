@@ -8,9 +8,9 @@ members = [
     "maplibre-build-tools",
     "maplibre-demo",
     "android",
-    "apple",
-    "web",
-    "benchmarks",
+    #"apple",
+    #"web",
+    #"benchmarks",
 ]
 
 [workspace.package]

@@ -3,6 +3,7 @@
 use std::{fmt::Debug, marker::PhantomData};
 
 use instant::Instant;
+use log::info;
 use maplibre::{
     environment::{Environment, OffscreenKernel},
     event_loop::{EventLoop, EventLoopProxy, SendEventError},
@@ -87,6 +88,7 @@ impl<ET: 'static + PartialEq + Debug> EventLoop<ET> for WinitEventLoop<ET> {
 
         let mut input_controller = InputController::new(0.2, 100.0, 0.1);
         let mut scale_factor = map.window().scale_factor();
+        let mut last_cursor_pos: Option<winit::dpi::PhysicalPosition<f64>> = None;
 
         let loop_ = move |event, window_target: &ActiveEventLoop| {
             #[cfg(target_os = "android")]
@@ -114,6 +116,21 @@ impl<ET: 'static + PartialEq + Debug> EventLoop<ET> for WinitEventLoop<ET> {
                         window_id,
                     } if window_id == map.window().id().into() => {
                         match event {
+                            WindowEvent::CursorMoved { position, .. } => {
+                                last_cursor_pos = Some(*position);
+                            }
+                            WindowEvent::Touch(touch_event) => {
+                                use winit::event::TouchPhase;
+
+                                if touch_event.phase == TouchPhase::Started {
+                                    let x = touch_event.location.x as f32;
+                                    let y = touch_event.location.y as f32;
+
+                                    log::info!("TOUCH at x={}, y={}", x, y);
+
+                                    map.on_user_click(x, y);
+                                }
+                            }
                             WindowEvent::RedrawRequested => {
                                 if !map.is_initialized() {
                                     return;
@@ -169,6 +186,16 @@ impl<ET: 'static + PartialEq + Debug> EventLoop<ET> for WinitEventLoop<ET> {
                                         log::info!("New scaling factor: {}", new_scale_factor);
                                         scale_factor = *new_scale_factor;
                                         map_context.resize(map_context.renderer.resources.surface.size(), scale_factor);
+                                    }
+                                }
+                                WindowEvent::MouseInput {
+                                    state: ElementState::Pressed,
+                                    button: winit::event::MouseButton::Left,
+                                    ..
+                                } => {
+                                    if let Some(pos) = last_cursor_pos {
+                                        info!("Mouse button pressed at ({}, {})", pos.x, pos.y);
+                                        map.on_user_click(pos.x as f32, pos.y as f32);
                                     }
                                 }
                                 _ => {}

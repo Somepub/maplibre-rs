@@ -2,7 +2,7 @@ use std::ops::Deref;
 use wgpu::StoreOp;
 
 use crate::{
-    debug::{text_renderer::TextRenderer, text_resource::TextRendererResource, TileDebugItem},
+    debug::{text_resource::TextRendererResource, TileDebugItem},
     render::{
         eventually::Eventually::Initialized,
         graph::{Node, NodeRunError, RenderContext, RenderGraphContext, SlotInfo},
@@ -65,22 +65,12 @@ impl Node for DebugPassNode {
             }
         }
 
-        let text_res = match world.resources.get::<TextRendererResource>() {
-            Some(t) => t,
-            None => return Ok(()),
-        };
-
-        let renderer_ptr = {
+        if let Some(text_res) = world.resources.get::<TextRendererResource>() {
             let guard = text_res.renderer.read().unwrap();
-            if let Some(r) = &*guard {
-                r as *const TextRenderer
-            } else {
-                return Ok(());
+            if let Some(renderer) = &*guard {
+                renderer.draw(&mut tracked_pass);
             }
-        };
-
-        let renderer: &TextRenderer = unsafe { &*renderer_ptr };
-        renderer.draw(&mut tracked_pass);
+        }
 
         Ok(())
     }

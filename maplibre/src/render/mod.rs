@@ -590,11 +590,6 @@ impl<E: Environment> Plugin<E> for RenderPlugin {
             )
             .expect("main pass driver or dependencies do not exist");
 
-        graph.add_node("text_pass", DebugPassNode::new());
-        graph
-            .add_node_edge(main_graph::node::MAIN_PASS_DRIVER, "text_pass")
-            .expect("Could not connect text_pass after main pass");
-
         // render graph dependency
         resources.init::<RenderPhase<LayerItem>>();
         resources.init::<RenderPhase<TileMaskItem>>();

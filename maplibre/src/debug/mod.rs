@@ -3,7 +3,7 @@ use std::{ops::Deref, rc::Rc};
 use crate::{
     debug::{
         cleanup_system::cleanup_system, debug_pass::DebugPassNode, queue_system::queue_system,
-        resource_system::resource_system,
+        resource_system::resource_system, text_resource::TextRendererResource,
     },
     environment::Environment,
     kernel::Kernel,
@@ -19,6 +19,7 @@ use crate::{
     tcs::world::World,
 };
 
+pub mod bmfont;
 mod cleanup_system;
 mod debug_pass;
 pub mod label_resource;
@@ -78,6 +79,10 @@ impl<E: Environment> Plugin<E> for DebugPlugin {
         graph: &mut RenderGraph,
     ) {
         let resources = &mut world.resources;
+
+        resources.insert(TextRendererResource {
+            renderer: std::sync::RwLock::new(None),
+        });
 
         let draw_graph = graph.get_sub_graph_mut(draw_graph::NAME).unwrap();
         draw_graph.add_node(draw_graph::node::DEBUG_PASS, DebugPassNode::new());

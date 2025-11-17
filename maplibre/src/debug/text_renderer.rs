@@ -1,3 +1,4 @@
+use crate::debug::bmfont::BMFont;
 use crate::render::resource::TrackedRenderPass;
 use bytemuck_derive::{Pod, Zeroable};
 
@@ -8,37 +9,40 @@ pub struct TextVertex {
     pub uv: [f32; 2],
 }
 
-pub struct BitmapFont {
-    pub texture: wgpu::Texture,
-    pub view: wgpu::TextureView,
-    pub sampler: wgpu::Sampler,
-    pub char_w: f32,
-    pub char_h: f32,
-    pub cols: u32,
-    pub rows: u32,
-    pub start: u32,
-}
-
 pub struct TextRenderer {
-    font: BitmapFont,
+    font: BMFont,
+    texture: wgpu::Texture,
+    view: wgpu::TextureView,
+    sampler: wgpu::Sampler,
+
     pipeline: wgpu::RenderPipeline,
     bind_group: wgpu::BindGroup,
-    vertex_buffer: wgpu::Buffer,
+
+    vb: wgpu::Buffer,
     vertex_count: u32,
+    screen_w: f32,
+    screen_h: f32,
 }
 
 impl TextRenderer {
-    pub fn new(device: &wgpu::Device, queue: &wgpu::Queue, format: wgpu::TextureFormat) -> Self {
-        let atlas = include_bytes!(concat!(
+    pub fn new(
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        format: wgpu::TextureFormat,
+        screen_w: u32,
+        screen_h: u32,
+    ) -> Self {
+        // --- load font atlas ---
+        let atlas_bytes = include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/assets/font_atlas.png"
         ));
-        let rgba = image::load_from_memory(atlas).unwrap().to_rgba8();
-        let (w, h) = rgba.dimensions();
-        let bytes = rgba.as_raw();
+        let image = image::load_from_memory(atlas_bytes).unwrap().to_rgba8();
+        let (w, h) = image.dimensions();
+        let raw = image.as_raw();
 
         let texture = device.create_texture(&wgpu::TextureDescriptor {
-            label: Some("text_font_texture"),
+            label: Some("font_atlas"),
             size: wgpu::Extent3d {
                 width: w,
                 height: h,
@@ -54,7 +58,7 @@ impl TextRenderer {
 
         queue.write_texture(
             texture.as_image_copy(),
-            bytes,
+            raw,
             wgpu::ImageDataLayout {
                 offset: 0,
                 bytes_per_row: Some(4 * w),
@@ -69,11 +73,19 @@ impl TextRenderer {
 
         let view = texture.create_view(&Default::default());
         let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
-            mag_filter: wgpu::FilterMode::Nearest,
-            min_filter: wgpu::FilterMode::Nearest,
+            mag_filter: wgpu::FilterMode::Linear,
+            min_filter: wgpu::FilterMode::Linear,
             ..Default::default()
         });
 
+        // --- load FNT ---
+        let fnt_text = include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/assets/font_atlas.fnt"
+        ));
+        let font = BMFont::from_fnt(fnt_text);
+
+        // --- shader ---
         let shader = device.create_shader_module(wgpu::include_wgsl!("text_shader.wgsl"));
 
         let bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -113,33 +125,22 @@ impl TextRenderer {
             label: Some("text_bind_group"),
         });
 
-        let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: Some("text_pipeline_layout"),
+        let pl = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("text_pl"),
             bind_group_layouts: &[&bgl],
             push_constant_ranges: &[],
         });
 
         let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("text_pipeline"),
-            layout: Some(&pipeline_layout),
+            layout: Some(&pl),
             vertex: wgpu::VertexState {
                 module: &shader,
                 entry_point: "vs_main",
                 buffers: &[wgpu::VertexBufferLayout {
                     array_stride: std::mem::size_of::<TextVertex>() as u64,
                     step_mode: wgpu::VertexStepMode::Vertex,
-                    attributes: &[
-                        wgpu::VertexAttribute {
-                            offset: 0,
-                            shader_location: 0,
-                            format: wgpu::VertexFormat::Float32x2,
-                        },
-                        wgpu::VertexAttribute {
-                            offset: 8,
-                            shader_location: 1,
-                            format: wgpu::VertexFormat::Float32x2,
-                        },
-                    ],
+                    attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2],
                 }],
                 compilation_options: Default::default(),
             },
@@ -160,99 +161,101 @@ impl TextRenderer {
             cache: None,
         });
 
-        let vertex_buffer = device.create_buffer(&wgpu::BufferDescriptor {
+        let vb = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("text_vb"),
-            size: 64 * 1024, // 64 KB buffer for text
+            size: 256 * 1024,
             usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
 
         Self {
-            font: BitmapFont {
-                texture,
-                view,
-                sampler,
-                char_w: 12.0,
-                char_h: 20.0,
-                cols: 16,
-                rows: 6,
-                start: 32,
-            },
+            font,
+            texture,
+            view,
+            sampler,
             pipeline,
             bind_group,
-            vertex_buffer,
+            vb,
             vertex_count: 0,
+            screen_w: screen_w as f32,
+            screen_h: screen_h as f32,
         }
     }
 
-    pub fn set_text(&mut self, queue: &wgpu::Queue, text: &str, x: f32, y: f32) {
+    fn to_ndc(&self, x: f32, y: f32) -> [f32; 2] {
+        [
+            (x / self.screen_w) * 2.0 - 1.0,
+            1.0 - (y / self.screen_h) * 2.0,
+        ]
+    }
+
+    pub fn set_text(&mut self, queue: &wgpu::Queue, text: &str, px: f32, py: f32) {
         let mut vertices = Vec::<TextVertex>::new();
-        let mut cx = x;
+        let mut cx = px;
 
         for ch in text.chars() {
-            let idx = (ch as u32).saturating_sub(self.font.start);
-            let col = idx % self.font.cols;
-            let row = idx / self.font.cols;
+            if let Some(g) = self.font.chars.get(&(ch as u32)) {
+                let gx = cx + g.xoffset;
+                let gy = py + g.yoffset;
 
-            let u1 = col as f32 / self.font.cols as f32;
-            let v1 = row as f32 / self.font.rows as f32;
-            let u2 = u1 + 1.0 / self.font.cols as f32;
-            let v2 = v1 + 1.0 / self.font.rows as f32;
+                let u1 = g.x / self.font.scale_w;
+                let v1 = g.y / self.font.scale_h;
+                let u2 = (g.x + g.w) / self.font.scale_w;
+                let v2 = (g.y + g.h) / self.font.scale_h;
 
-            let w = self.font.char_w;
-            let h = self.font.char_h;
+                let p1 = self.to_ndc(gx, gy);
+                let p2 = self.to_ndc(gx + g.w, gy);
+                let p3 = self.to_ndc(gx + g.w, gy + g.h);
+                let p4 = self.to_ndc(gx, gy + g.h);
 
-            let p1 = [cx, y];
-            let p2 = [cx + w, y];
-            let p3 = [cx + w, y + h];
-            let p4 = [cx, y + h];
+                vertices.extend_from_slice(&[
+                    TextVertex {
+                        pos: p1,
+                        uv: [u1, v1],
+                    },
+                    TextVertex {
+                        pos: p2,
+                        uv: [u2, v1],
+                    },
+                    TextVertex {
+                        pos: p3,
+                        uv: [u2, v2],
+                    },
+                    TextVertex {
+                        pos: p1,
+                        uv: [u1, v1],
+                    },
+                    TextVertex {
+                        pos: p3,
+                        uv: [u2, v2],
+                    },
+                    TextVertex {
+                        pos: p4,
+                        uv: [u1, v2],
+                    },
+                ]);
 
-            vertices.extend_from_slice(&[
-                TextVertex {
-                    pos: p1,
-                    uv: [u1, v1],
-                },
-                TextVertex {
-                    pos: p2,
-                    uv: [u2, v1],
-                },
-                TextVertex {
-                    pos: p3,
-                    uv: [u2, v2],
-                },
-                TextVertex {
-                    pos: p1,
-                    uv: [u1, v1],
-                },
-                TextVertex {
-                    pos: p3,
-                    uv: [u2, v2],
-                },
-                TextVertex {
-                    pos: p4,
-                    uv: [u1, v2],
-                },
-            ]);
-
-            cx += w;
+                cx += g.xadvance;
+            }
         }
 
-        if !vertices.is_empty() {
-            queue.write_buffer(&self.vertex_buffer, 0, bytemuck::cast_slice(&vertices));
-            self.vertex_count = vertices.len() as u32;
-        } else {
+        if vertices.is_empty() {
             self.vertex_count = 0;
+            return;
         }
+
+        queue.write_buffer(&self.vb, 0, bytemuck::cast_slice(&vertices));
+        self.vertex_count = vertices.len() as u32;
     }
 
-    pub fn draw<'w>(&'w self, pass: &mut TrackedRenderPass<'w>) {
+    pub fn draw<'a>(&'a self, pass: &mut TrackedRenderPass<'a>) {
         if self.vertex_count == 0 {
             return;
         }
 
         pass.set_render_pipeline(&self.pipeline);
         pass.set_bind_group(0, &self.bind_group, &[]);
-        pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
+        pass.set_vertex_buffer(0, self.vb.slice(..));
         pass.draw(0..self.vertex_count, 0..1);
     }
 }

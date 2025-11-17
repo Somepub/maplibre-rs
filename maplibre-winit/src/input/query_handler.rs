@@ -12,6 +12,7 @@ use crate::input::UpdateState;
 pub struct QueryHandler {
     window_position: Option<Vector2<f64>>,
     clicking: bool,
+    on_click: Option<Box<dyn Fn(f32, f32)>>,
 }
 
 impl QueryHandler {
@@ -19,6 +20,7 @@ impl QueryHandler {
         Self {
             window_position: None,
             clicking: false,
+            on_click: None,
         }
     }
 
@@ -52,6 +54,10 @@ impl QueryHandler {
             self.clicking = false;
         }
         true
+    }
+
+    pub fn set_on_click<F: 'static + Fn(f32, f32)>(&mut self, f: F) {
+        self.on_click = Some(Box::new(f));
     }
 }
 
@@ -102,6 +108,9 @@ impl UpdateState for QueryHandler {
                                 .map(|geometry| &geometry.properties)
                                 .collect::<Vec<_>>()
                         );
+                        if let Some(ref cb) = self.on_click {
+                            cb(window_position.x as f32, window_position.y as f32);
+                        }
                     } else {
                         log::info!("No geometry found.",);
                     }

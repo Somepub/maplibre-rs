@@ -21,6 +21,7 @@ use crate::{
 
 mod cleanup_system;
 mod debug_pass;
+pub mod label_resource;
 mod queue_system;
 mod render_commands;
 mod resource_system;

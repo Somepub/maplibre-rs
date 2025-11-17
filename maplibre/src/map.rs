@@ -1,10 +1,12 @@
 use std::rc::Rc;
 
+use log::info;
 use thiserror::Error;
 
 use crate::{
     context::MapContext,
     coords::{LatLon, WorldCoords, Zoom},
+    debug::{text_renderer::TextRenderer, text_resource::TextRendererResource},
     environment::Environment,
     kernel::Kernel,
     plugin::Plugin,
@@ -132,6 +134,15 @@ where
                             );
                         }
 
+                        let format = renderer.resources.surface.surface_format();
+                        world.resources.insert(TextRendererResource {
+                            renderer: std::sync::RwLock::new(Some(TextRenderer::new(
+                                &renderer.device,
+                                &renderer.queue,
+                                format,
+                            ))),
+                        });
+
                         self.map_context = CurrentMapContext::Ready(MapContext {
                             world,
                             view_state,
@@ -148,14 +159,30 @@ where
     }
 
     pub fn on_user_click(&mut self, x: f32, y: f32) {
-        // For now: store exactly one label at the screen coordinate of the click.
-        self.labels.clear();
+        info!("User clicked at ({}, {})", x, y);
 
-        self.labels.push(TextLabel {
-            text: "Hello".into(),
-            screen_x: x,
-            screen_y: y,
-        });
+        let ctx = match &mut self.map_context {
+            CurrentMapContext::Ready(c) => c,
+            _ => return,
+        };
+        info!("MapContext READY!");
+
+        if let Some(text_res) = ctx.world.resources.get_mut::<TextRendererResource>() {
+            info!("TextRendererResource found!");
+            let mut renderer_guard = text_res.renderer.write().unwrap();
+
+            if let Some(renderer) = renderer_guard.as_mut() {
+                info!("TextRenderer found!");
+                // IMPORTANT: we need queue
+                let queue = &ctx.renderer.queue;
+
+                // 3. DIRECT RENDER-VERTEX UPDATE HERE
+                renderer.set_text(queue, "Hello", x, y);
+                info!("Text rendered!");
+            }
+        }
+
+        // You don't need labels vec anymore unless you want multiple texts
     }
 
     pub fn window_mut(&mut self) -> &mut <E::MapWindowConfig as MapWindowConfig>::MapWindow {

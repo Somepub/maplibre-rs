@@ -57,6 +57,10 @@ impl InputController {
         false
     }
 
+    pub fn query_handler_mut(&mut self) -> &mut QueryHandler {
+        &mut self.query_handler
+    }
+
     /// Process the given winit `[winit::event::WindowEvent]`.
     /// Returns true if the event has been processed and false otherwise.
     pub fn window_input(&mut self, event: &WindowEvent, scale_factor: f64) -> bool {

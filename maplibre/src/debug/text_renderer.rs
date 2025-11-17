@@ -1,6 +1,5 @@
 use crate::render::resource::TrackedRenderPass;
 use bytemuck_derive::{Pod, Zeroable};
-use wgpu::util::DeviceExt;
 
 #[repr(C)]
 #[derive(Clone, Copy, Pod, Zeroable)]
@@ -30,7 +29,10 @@ pub struct TextRenderer {
 
 impl TextRenderer {
     pub fn new(device: &wgpu::Device, queue: &wgpu::Queue, format: wgpu::TextureFormat) -> Self {
-        let atlas = include_bytes!("../../assets/font_atlas.png");
+        let atlas = include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/assets/font_atlas.png"
+        ));
         let rgba = image::load_from_memory(atlas).unwrap().to_rgba8();
         let (w, h) = rgba.dimensions();
         let bytes = rgba.as_raw();
@@ -158,10 +160,11 @@ impl TextRenderer {
             cache: None,
         });
 
-        let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        let vertex_buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("text_vb"),
-            contents: &[],
+            size: 64 * 1024, // 64 KB buffer for text
             usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
         });
 
         Self {

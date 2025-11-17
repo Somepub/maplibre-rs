@@ -1,9 +1,8 @@
 use std::ops::Deref;
-
 use wgpu::StoreOp;
 
 use crate::{
-    debug::TileDebugItem,
+    debug::{text_renderer::TextRenderer, text_resource::TextRendererResource, TileDebugItem},
     render::{
         eventually::Eventually::Initialized,
         graph::{Node, NodeRunError, RenderContext, RenderGraphContext, SlotInfo},
@@ -14,8 +13,7 @@ use crate::{
     tcs::world::World,
 };
 
-/// Pass which renders debug information on top of the map.
-pub struct DebugPassNode {}
+pub struct DebugPassNode;
 
 impl DebugPassNode {
     pub fn new() -> Self {
@@ -27,8 +25,6 @@ impl Node for DebugPassNode {
     fn input(&self) -> Vec<SlotInfo> {
         vec![]
     }
-
-    fn update(&mut self, _state: &mut RenderResources) {}
 
     fn run(
         &self,
@@ -44,7 +40,6 @@ impl Node for DebugPassNode {
         let color_attachment = wgpu::RenderPassColorAttachment {
             view: render_target.deref(),
             ops: wgpu::Operations {
-                // Draws on-top of previously rendered data
                 load: wgpu::LoadOp::Load,
                 store: StoreOp::Store,
             },
@@ -64,15 +59,28 @@ impl Node for DebugPassNode {
 
         let mut tracked_pass = TrackedRenderPass::new(render_pass);
 
-        if let Some(debug_items) = world.resources.get::<RenderPhase<TileDebugItem>>() {
-            log::trace!(
-                "RenderPhase<TileDebugItem>::size() = {}",
-                debug_items.size()
-            );
-            for item in debug_items {
+        if let Some(items) = world.resources.get::<RenderPhase<TileDebugItem>>() {
+            for item in items {
                 item.draw_function.draw(&mut tracked_pass, world, item);
             }
         }
+
+        let text_res = match world.resources.get::<TextRendererResource>() {
+            Some(t) => t,
+            None => return Ok(()),
+        };
+
+        let renderer_ptr = {
+            let guard = text_res.renderer.read().unwrap();
+            if let Some(r) = &*guard {
+                r as *const TextRenderer
+            } else {
+                return Ok(());
+            }
+        };
+
+        let renderer: &TextRenderer = unsafe { &*renderer_ptr };
+        renderer.draw(&mut tracked_pass);
 
         Ok(())
     }

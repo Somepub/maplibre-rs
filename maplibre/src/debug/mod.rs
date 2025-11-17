@@ -24,6 +24,8 @@ mod debug_pass;
 mod queue_system;
 mod render_commands;
 mod resource_system;
+pub mod text_renderer;
+pub mod text_resource;
 
 /// Labels for the "draw" graph
 mod draw_graph {

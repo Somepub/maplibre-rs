@@ -14,7 +14,6 @@ use crate::{
         },
         error::RenderError,
         graph::RenderGraphError,
-        text_renderer::{TextLabel, TextRenderer},
         view_state::ViewState,
     },
     schedule::{Schedule, Stage},
@@ -46,12 +45,17 @@ pub enum CurrentMapContext {
     },
 }
 
+pub struct TextLabel {
+    pub text: String,
+    pub screen_x: f32,
+    pub screen_y: f32,
+}
+
 pub struct Map<E: Environment> {
     kernel: Rc<Kernel<E>>,
     schedule: Schedule,
     map_context: CurrentMapContext,
     window: <E::MapWindowConfig as MapWindowConfig>::MapWindow,
-    pub text_renderer: TextRenderer,
     pub labels: Vec<TextLabel>,
 
     plugins: Vec<Box<dyn Plugin<E>>>,
@@ -82,6 +86,7 @@ where
             },
             window,
             plugins,
+            labels: Vec::new(),
         };
         Ok(map)
     }

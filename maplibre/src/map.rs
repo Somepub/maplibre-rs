@@ -147,16 +147,6 @@ where
         }
     }
 
-    pub fn geo_to_screen<E: Environment>(map: Map<E>, lat: f64, lon: f64) -> Option<(f32, f32)> {
-        let ll = LatLon::new(lat, lon);
-
-        let ctx = map.context().ok()?;
-
-        let screen = ctx.renderer.view_state.geo_to_screen(&ll)?;
-
-        Some((screen.x, screen.y))
-    }
-
     pub fn on_user_click(&mut self, x: f32, y: f32) {
         // For now: store exactly one label at the screen coordinate of the click.
         self.labels.clear();

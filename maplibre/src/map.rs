@@ -158,11 +158,14 @@ where
     }
 
     pub fn on_user_click(&mut self, x: f32, y: f32) {
-        for label in &map.text_labels {
-            if let Some((x, y)) = map.geo_to_screen(label.latitude, label.longitude) {
-                text_renderer.draw_text(pass, &label.text, x, y);
-            }
-        }
+        // For now: store exactly one label at the screen coordinate of the click.
+        self.labels.clear();
+
+        self.labels.push(TextLabel {
+            text: "Hello".into(),
+            screen_x: x,
+            screen_y: y,
+        });
     }
 
     pub fn window_mut(&mut self) -> &mut <E::MapWindowConfig as MapWindowConfig>::MapWindow {

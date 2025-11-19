@@ -84,6 +84,8 @@ cint.workspace = true
 downcast-rs.workspace = true
 smallvec.workspace = true
 
+glam = "0.30"
+
 # Headless
 png = { workspace = true, optional = true }
 image = { workspace = true, optional = true }

@@ -3,7 +3,7 @@ use super::{
     overlay_phase::{OverlayItem, OverlayKind},
 };
 use crate::{render::RenderPhase, tcs::world::World};
-use wgpu::util::DeviceExt;
+//use wgpu::util::DeviceExt;
 
 pub struct OverlayTextRenderer {
     pub pipeline: wgpu::RenderPipeline,

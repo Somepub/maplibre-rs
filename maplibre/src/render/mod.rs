@@ -59,7 +59,7 @@ pub mod builder;
 pub mod camera;
 pub mod error;
 pub mod eventually;
-pub mod overlay;
+//pub mod overlay;
 pub mod render_commands;
 pub mod render_phase;
 pub mod settings;
